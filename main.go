@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
 	"github.com/prometheus/client_golang/api"
-	"github.com/prometheus/client_golang/api/prometheus/v1"
+	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 	"github.com/sensu-community/sensu-plugin-sdk/sensu"
 	"github.com/sensu/sensu-go/types"
@@ -25,8 +26,9 @@ type Config struct {
 	CriticalThreshold utils.NagiosThreshold
 	WarningThreshold  utils.NagiosThreshold
 	EmitPerfdata      bool
-	PerfdataName      string
+	Name              string
 	DebugQuery        bool
+	NanIsOk           bool
 }
 
 var (
@@ -80,7 +82,7 @@ var (
 			Env:       "PROMETHEUS_EMIT_PERFDATA",
 			Argument:  "emit-perfdata",
 			Shorthand: "p",
-			Default:   true,
+			Default:   false,
 			Usage:     "Add perfdata to check output",
 			Value:     &plugin.EmitPerfdata,
 		},
@@ -90,8 +92,8 @@ var (
 			Argument:  "name",
 			Shorthand: "n",
 			Default:   "",
-			Usage:     "Perfata name",
-			Value:     &plugin.PerfdataName,
+			Usage:     "Name",
+			Value:     &plugin.Name,
 		},
 		{
 			Path:      "debug_query",
@@ -101,6 +103,15 @@ var (
 			Default:   false,
 			Usage:     "Enable debug output for query",
 			Value:     &plugin.DebugQuery,
+		},
+		{
+			Path:      "nan_is_ok",
+			Env:       "PROMETHEUS_NAN_IS_OK",
+			Argument:  "nan-is-ok",
+			Shorthand: "O",
+			Default:   false,
+			Usage:     "NaN result is ok",
+			Value:     &plugin.NanIsOk,
 		},
 	}
 )
@@ -123,13 +134,13 @@ func checkArgs(event *types.Event) (int, error) {
 		return sensu.CheckStateCritical, fmt.Errorf("--critical error: %v", err)
 	}
 
-	if plugin.PerfdataName == "" {
+	if plugin.Name == "" {
 		qn := fmt.Sprintf("query_%s", plugin.Query)
-		for _, rs := range []string{"-", "{", "}", "(", ")", "=", "."} {
+		for _, rs := range []string{"-", "{", "}", "(", ")", "=", ".", "\""} {
 			qn = strings.ReplaceAll(qn, rs, "_")
 		}
 
-		plugin.PerfdataName = qn
+		plugin.Name = qn
 	}
 
 	return sensu.CheckStateOK, nil
@@ -186,18 +197,27 @@ func executeCheck(event *types.Event) (int, error) {
 	warn := plugin.WarningThreshold.Check(value)
 	state := sensu.CheckStateOK
 
-	if crit {
-		fmt.Printf("CRITICAL: %s=%f which is out of %s", plugin.PerfdataName, value, plugin.CriticalStr)
-		state = sensu.CheckStateCritical
-	} else if warn {
-		fmt.Printf("WARNING: %s=%f which is out of %s", plugin.PerfdataName, value, plugin.WarningStr)
-		state = sensu.CheckStateWarning
+	if !math.IsNaN(value) {
+		if crit {
+			fmt.Printf("CRITICAL: %s is %f which is out of %s", plugin.Name, value, plugin.CriticalStr)
+			state = sensu.CheckStateCritical
+		} else if warn {
+			fmt.Printf("WARNING: %s is %f which is out of %s", plugin.Name, value, plugin.WarningStr)
+			state = sensu.CheckStateWarning
+		} else {
+			fmt.Printf("OK: %s is %f", plugin.Name, value)
+		}
 	} else {
-		fmt.Printf("OK: %s=%f", plugin.PerfdataName, value)
+		if plugin.NanIsOk {
+			fmt.Printf("OK: %s is %f", plugin.Name, value)
+		} else {
+			fmt.Printf("UNKNOWN: %s is %f", plugin.Name, value)
+			state = sensu.CheckStateUnknown
+		}
 	}
 
 	if plugin.EmitPerfdata {
-		fmt.Printf(" | %s=%f", plugin.PerfdataName, value)
+		fmt.Printf(" | %s=%f", plugin.Name, value)
 	}
 
 	fmt.Println()
