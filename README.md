@@ -1,37 +1,8 @@
-{{- /* Ignore this text, until templating is ran via [sensu-plugin-tool](https://github.com/sensu-community/sensu-plugin-tool) the below badge links wiill not render */ -}}
+[![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/sardinasystems/sensu-go-prometheus-metric-check)
+![Go Test](https://github.com/sardinasystems/sensu-go-prometheus-metric-check/workflows/Go%20Test/badge.svg)
+![goreleaser](https://github.com/sardinasystems/sensu-go-prometheus-metric-check/workflows/goreleaser/badge.svg)
 
-[![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/{{ .GithubUser }}/{{ .GithubProject }})
-![Go Test](https://github.com/{{ .GithubUser }}/{{ .GithubProject }}/workflows/Go%20Test/badge.svg)
-![goreleaser](https://github.com/{{ .GithubUser }}/{{ .GithubProject }}/workflows/goreleaser/badge.svg)
-
-# Check Plugin Template
-
-## Overview
-check-plugin-template is a template repository which wraps the [Sensu Plugin SDK][2].
-To use this project as a template, click the "Use this template" button from the main project page.
-Once the repository is created from this template, you can use the [Sensu Plugin Tool][9] to
-populate the templated fields with the proper values.
-
-## Functionality
-
-After successfully creating a project from this template, update the `Config` struct with any
-configuration options for the plugin, map those values as plugin options in the variable `options`,
-and customize the `checkArgs` and `executeCheck` functions in [main.go][7].
-
-When writing or updating a plugin's README from this template, review the Sensu Community
-[plugin README style guide][3] for content suggestions and guidance. Remove everything
-prior to `# {{ .Name }}` from the generated README file, and add additional context about the
-plugin per the style guide.
-
-## Releases with Github Actions
-
-To release a version of your project, simply tag the target sha with a semver release without a `v`
-prefix (ex. `1.0.0`). This will trigger the [GitHub action][5] workflow to [build and release][4]
-the plugin with goreleaser. Register the asset with [Bonsai][8] to share it with the community!
-
-***
-
-# {{ .Name }}
+# sensu-go-prometheus-metric-check
 
 ## Table of Contents
 - [Overview](#overview)
@@ -46,11 +17,18 @@ the plugin with goreleaser. Register the asset with [Bonsai][8] to share it with
 
 ## Overview
 
-The {{ .Name }} is a [Sensu Check][6] that ...
+The sensu-go-prometheus-metric-check is a [Sensu Check][6] that queries Prometheus for alerting.
 
 ## Files
 
+- sensu-go-prometheus-metric-check
+
 ## Usage examples
+
+```
+sensu-go-prometheus-metric-check -H http://example.com:9090 -q scalar(up{instance="example.com:9100"}) -c 1 -w 1 -m lt	# scalar
+sensu-go-prometheus-metric-check -H http://example.com:9090 -q up{instance="example.com:9100"} -c 1 -w 1 -m lt		# vector
+```
 
 ## Configuration
 
@@ -61,10 +39,10 @@ consider doing so! If you're using sensuctl 5.13 with Sensu Backend 5.13 or late
 following command to add the asset:
 
 ```
-sensuctl asset add {{ .GithubUser }}/{{ .GithubProject }}
+sensuctl asset add sardinasystems/sensu-go-prometheus-metric-check
 ```
 
-If you're using an earlier version of sensuctl, you can find the asset on the [Bonsai Asset Index][https://bonsai.sensu.io/assets/{{ .GithubUser }}/{{ .GithubProject }}].
+If you're using an earlier version of sensuctl, you can find the asset on the [Bonsai Asset Index][https://bonsai.sensu.io/assets/sardinasystems/sensu-go-prometheus-metric-check].
 
 ### Check definition
 
@@ -73,14 +51,14 @@ If you're using an earlier version of sensuctl, you can find the asset on the [B
 type: CheckConfig
 api_version: core/v2
 metadata:
-  name: {{ .GithubProject }}
+  name: sensu-go-prometheus-metric-check
   namespace: default
 spec:
-  command: {{ .GithubProject }} --example example_arg
+  command: sensu-go-prometheus-metric-check -H example.com -q up -c 1 -w 1 -m lt
   subscriptions:
   - system
   runtime_assets:
-  - {{ .GithubUser }}/{{ .GithubProject }}
+  - sardinasystems/sensu-go-prometheus-metric-check
 ```
 
 ## Installation from source
@@ -89,7 +67,7 @@ The preferred way of installing and deploying this plugin is to use it as an Ass
 like to compile and install the plugin from source or contribute to it, download the latest version
 or create an executable script from this source.
 
-From the local path of the {{ .GithubProject }} repository:
+From the local path of the sensu-go-prometheus-metric-check repository:
 
 ```
 go build

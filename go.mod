@@ -1,4 +1,4 @@
-module github.com/{{ .GithubUser }}/{{ .GithubProject }}
+module github.com/sardinasystems/sensu-go-prometheus-metric-check
 
 go 1.13
 

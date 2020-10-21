@@ -17,9 +17,9 @@ type Config struct {
 var (
 	plugin = Config{
 		PluginConfig: sensu.PluginConfig{
-			Name:     "{{ .GithubProject }}",
-			Short:    "{{ .Description }}",
-			Keyspace: "sensu.io/plugins/{{ .GithubProject }}/config",
+			Name:     "sensu-go-prometheus-metric-check",
+			Short:    "plugin to query prometheus for alerting",
+			Keyspace: "sensu.io/plugins/sensu-go-prometheus-metric-check/config",
 		},
 	}
 
