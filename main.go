@@ -2,10 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"math"
-	"strconv"
-	"strings"
 
 	"github.com/sensu-community/sensu-plugin-sdk/sensu"
 	"github.com/sensu/sensu-go/types"
