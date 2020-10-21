@@ -1,8 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"strings"
+	"time"
 
+	"github.com/prometheus/client_golang/api"
+	"github.com/prometheus/client_golang/api/prometheus/v1"
+	"github.com/prometheus/common/model"
 	"github.com/sensu-community/sensu-plugin-sdk/sensu"
 	"github.com/sensu/sensu-go/types"
 
@@ -12,14 +18,15 @@ import (
 // Config represents the check plugin config.
 type Config struct {
 	sensu.PluginConfig
-	PrometheusURL    string
-	Query            string
-	WarningRangeStr  string
-	CriticalRangeStr string
-	CriticalRange    utils.NagiosRange
-	WarningRange     utils.NagiosRange
-	EmitPerfdata     bool
-	PerfdataName     string
+	PrometheusURL     string
+	Query             string
+	WarningStr        string
+	CriticalStr       string
+	CriticalThreshold utils.NagiosThreshold
+	WarningThreshold  utils.NagiosThreshold
+	EmitPerfdata      bool
+	PerfdataName      string
+	DebugQuery        bool
 }
 
 var (
@@ -32,7 +39,7 @@ var (
 	}
 
 	options = []*sensu.PluginConfigOption{
-		&sensu.PluginConfigOption{
+		{
 			Path:      "host",
 			Env:       "PROMETHEUS_HOST",
 			Argument:  "host",
@@ -41,7 +48,7 @@ var (
 			Usage:     "Host URL to access Prometheus",
 			Value:     &plugin.PrometheusURL,
 		},
-		&sensu.PluginConfigOption{
+		{
 			Path:      "query",
 			Env:       "PROMETHEUS_QUERY",
 			Argument:  "query",
@@ -50,34 +57,25 @@ var (
 			Usage:     "PromQL query",
 			Value:     &plugin.Query,
 		},
-		&sensu.PluginConfigOption{
-			Path:      "method",
-			Env:       "PROMETHEUS_METHOD",
-			Argument:  "method",
-			Shorthand: "m",
-			Default:   "ge",
-			Usage:     "PromQL query",
-			Value:     &plugin.Query,
-		},
-		&sensu.PluginConfigOption{
+		{
 			Path:      "warning",
 			Env:       "PROMETHEUS_WARNING",
 			Argument:  "warning",
 			Shorthand: "w",
-			Default:   0.0,
+			Default:   "",
 			Usage:     "Warning level",
-			Value:     &plugin.WarningRangeStr,
+			Value:     &plugin.WarningStr,
 		},
-		&sensu.PluginConfigOption{
+		{
 			Path:      "critical",
 			Env:       "PROMETHEUS_CRITICAL",
 			Argument:  "critical",
 			Shorthand: "c",
-			Default:   0.0,
+			Default:   "",
 			Usage:     "Critical level",
-			Value:     &plugin.CriticalRangeStr,
+			Value:     &plugin.CriticalStr,
 		},
-		&sensu.PluginConfigOption{
+		{
 			Path:      "emit_perfdata",
 			Env:       "PROMETHEUS_EMIT_PERFDATA",
 			Argument:  "emit-perfdata",
@@ -86,7 +84,7 @@ var (
 			Usage:     "Add perfdata to check output",
 			Value:     &plugin.EmitPerfdata,
 		},
-		&sensu.PluginConfigOption{
+		{
 			Path:      "name",
 			Env:       "PROMETHEUS_NAME",
 			Argument:  "name",
@@ -94,6 +92,15 @@ var (
 			Default:   "",
 			Usage:     "Perfata name",
 			Value:     &plugin.PerfdataName,
+		},
+		{
+			Path:      "debug_query",
+			Env:       "PROMETHEUS_DEBUG_QUERY",
+			Argument:  "debug-query",
+			Shorthand: "i",
+			Default:   false,
+			Usage:     "Enable debug output for query",
+			Value:     &plugin.DebugQuery,
 		},
 	}
 )
@@ -106,19 +113,93 @@ func main() {
 func checkArgs(event *types.Event) (int, error) {
 	var err error
 
-	plugin.WarningRange, err = utils.ParseRange(plugin.WarningRangeStr)
+	plugin.WarningThreshold, err = utils.ParseThreshold(plugin.WarningStr)
 	if err != nil {
 		return sensu.CheckStateCritical, fmt.Errorf("--warning error: %v", err)
 	}
 
-	plugin.CriticalRange, err = utils.ParseRange(plugin.CriticalRangeStr)
+	plugin.CriticalThreshold, err = utils.ParseThreshold(plugin.CriticalStr)
 	if err != nil {
 		return sensu.CheckStateCritical, fmt.Errorf("--critical error: %v", err)
+	}
+
+	if plugin.PerfdataName == "" {
+		qn := fmt.Sprintf("query_%s", plugin.Query)
+		for _, rs := range []string{"-", "{", "}", "(", ")", "=", "."} {
+			qn = strings.ReplaceAll(qn, rs, "_")
+		}
+
+		plugin.PerfdataName = qn
 	}
 
 	return sensu.CheckStateOK, nil
 }
 
 func executeCheck(event *types.Event) (int, error) {
-	return sensu.CheckStateOK, nil
+
+	apicfg := api.Config{
+		Address: plugin.PrometheusURL,
+	}
+
+	client, err := api.NewClient(apicfg)
+	if err != nil {
+		return sensu.CheckStateUnknown, fmt.Errorf("failed to create prometheus api client: %v", err)
+	}
+
+	v1api := v1.NewAPI(client)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	result, warnings, err := v1api.Query(ctx, plugin.Query, time.Now())
+	if err != nil {
+		return sensu.CheckStateUnknown, fmt.Errorf("query error: %v", err)
+	}
+
+	if len(warnings) > 0 {
+		for _, w := range warnings {
+			fmt.Printf("Query warning: %v\n", w)
+		}
+	}
+
+	if plugin.DebugQuery {
+		fmt.Printf("Query result: %v\n", result)
+	}
+
+	var value float64
+	switch result.Type() {
+	case model.ValScalar:
+		scalar := result.(*model.Scalar)
+		value = float64(scalar.Value)
+
+	case model.ValVector:
+		vector := result.(model.Vector)
+		if len(vector) == 0 {
+			return sensu.CheckStateUnknown, fmt.Errorf("query returns empty vector: %v", result)
+		}
+		value = float64(vector[0].Value)
+
+	default:
+		return sensu.CheckStateUnknown, fmt.Errorf("unsupported type for qery result: %s, result: %v", result.Type(), result)
+	}
+
+	crit := plugin.CriticalThreshold.Check(value)
+	warn := plugin.WarningThreshold.Check(value)
+	state := sensu.CheckStateOK
+
+	if crit {
+		fmt.Printf("CRITICAL: %s=%f which is out of %s", plugin.PerfdataName, value, plugin.CriticalStr)
+		state = sensu.CheckStateCritical
+	} else if warn {
+		fmt.Printf("WARNING: %s=%f which is out of %s", plugin.PerfdataName, value, plugin.WarningStr)
+		state = sensu.CheckStateWarning
+	} else {
+		fmt.Printf("OK: %s=%f", plugin.PerfdataName, value)
+	}
+
+	if plugin.EmitPerfdata {
+		fmt.Printf(" | %s=%f", plugin.PerfdataName, value)
+	}
+
+	fmt.Println()
+	return state, nil
 }

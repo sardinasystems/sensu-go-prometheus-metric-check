@@ -5,11 +5,11 @@ go 1.13
 require (
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/golang/protobuf v1.4.3 // indirect
-	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/magiconair/properties v1.8.4 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
+	github.com/prometheus/client_golang v1.8.0
+	github.com/prometheus/common v0.14.0
 	github.com/robertkrimen/otto v0.0.0-20200922221731-ef014fd054ac // indirect
 	github.com/sensu-community/sensu-plugin-sdk v0.10.1
 	github.com/sensu/sensu-go/api/core/v2 v2.4.0 // indirect
