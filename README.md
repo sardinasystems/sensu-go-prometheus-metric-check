@@ -44,7 +44,7 @@ following command to add the asset:
 sensuctl asset add sardinasystems/sensu-go-prometheus-metric-check
 ```
 
-If you're using an earlier version of sensuctl, you can find the asset on the [Bonsai Asset Index][https://bonsai.sensu.io/assets/sardinasystems/sensu-go-prometheus-metric-check].
+If you're using an earlier version of sensuctl, you can find the asset on the [Bonsai Asset Index](https://bonsai.sensu.io/assets/sardinasystems/sensu-go-prometheus-metric-check).
 
 ### Check definition
 
