@@ -19,6 +19,8 @@
 
 The sensu-go-prometheus-metric-check is a [Sensu Check][6] that queries Prometheus for alerting.
 
+NOTE: for critical and warning levels [Nagios threshold format](http://nagios-plugins.org/doc/guidelines.html#THRESHOLDFORMAT) used.
+
 ## Files
 
 - sensu-go-prometheus-metric-check
@@ -26,8 +28,8 @@ The sensu-go-prometheus-metric-check is a [Sensu Check][6] that queries Promethe
 ## Usage examples
 
 ```
-sensu-go-prometheus-metric-check -H http://example.com:9090 -q scalar(up{instance="example.com:9100"}) -c 1 -w 1 -m lt	# scalar
-sensu-go-prometheus-metric-check -H http://example.com:9090 -q up{instance="example.com:9100"} -c 1 -w 1 -m lt		# vector
+sensu-go-prometheus-metric-check -H http://example.com:9090 -q scalar(up{instance="example.com:9100"}) -c 1: -w 1:	# scalar
+sensu-go-prometheus-metric-check -H http://example.com:9090 -q up{instance="example.com:9100"} -c 1: -w 1:		# vector
 ```
 
 ## Configuration
@@ -54,7 +56,7 @@ metadata:
   name: sensu-go-prometheus-metric-check
   namespace: default
 spec:
-  command: sensu-go-prometheus-metric-check -H example.com -q up -c 1 -w 1 -m lt
+  command: sensu-go-prometheus-metric-check -H http://example.com:9090 -q rate(node_network_receive_bytes_total[1m]) -c 1e7: -w 1e6:
   subscriptions:
   - system
   runtime_assets:
