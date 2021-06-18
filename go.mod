@@ -15,7 +15,7 @@ require (
 	github.com/prometheus/common v0.26.0
 	github.com/robertkrimen/otto v0.0.0-20200922221731-ef014fd054ac // indirect
 	github.com/sensu/sensu-go/api/core/v2 v2.8.0 // indirect
-	github.com/sensu/sensu-go/types v0.6.0
+	github.com/sensu/sensu-go/types v0.7.0
 	github.com/sensu/sensu-plugin-sdk v0.13.1
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
