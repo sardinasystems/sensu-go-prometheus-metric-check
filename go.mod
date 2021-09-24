@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/prometheus/client_golang v1.11.0
 	github.com/prometheus/common v0.30.0
-	github.com/sensu/sensu-go/types v0.7.1
+	github.com/sensu/sensu-go/types v0.8.0
 	github.com/sensu/sensu-plugin-sdk v0.14.1
 	github.com/stretchr/testify v1.7.0
 )
