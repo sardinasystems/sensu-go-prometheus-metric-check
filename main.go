@@ -136,7 +136,7 @@ func checkArgs(event *types.Event) (int, error) {
 
 	if plugin.Name == "" {
 		qn := fmt.Sprintf("query_%s", plugin.Query)
-		for _, rs := range []string{"-", "[", "]", "{", "}", "(", ")", "=", ".", ":", ";", "\"", " ", "\t"} {
+		for _, rs := range []string{"+", "-", "*", "/", "[", "]", "{", "}", "(", ")", "=", ".", ":", ";", "\"", " ", "\t"} {
 			qn = strings.ReplaceAll(qn, rs, "_")
 		}
 
