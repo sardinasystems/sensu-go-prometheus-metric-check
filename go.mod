@@ -3,7 +3,7 @@ module github.com/sardinasystems/sensu-go-prometheus-metric-check
 go 1.17
 
 require (
-	github.com/prometheus/client_golang v1.12.1
+	github.com/prometheus/client_golang v1.12.2
 	github.com/prometheus/common v0.32.1
 	github.com/sensu/sensu-go/types v0.10.0
 	github.com/sensu/sensu-plugin-sdk v0.15.0
