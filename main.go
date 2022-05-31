@@ -40,8 +40,8 @@ var (
 		},
 	}
 
-	options = []*sensu.PluginConfigOption{
-		{
+	options = []sensu.ConfigOption{
+		&sensu.PluginConfigOption[string]{
 			Path:      "host",
 			Env:       "PROMETHEUS_HOST",
 			Argument:  "host",
@@ -50,7 +50,7 @@ var (
 			Usage:     "Host URL to access Prometheus",
 			Value:     &plugin.PrometheusURL,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      "query",
 			Env:       "PROMETHEUS_QUERY",
 			Argument:  "query",
@@ -59,7 +59,7 @@ var (
 			Usage:     "PromQL query",
 			Value:     &plugin.Query,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      "warning",
 			Env:       "PROMETHEUS_WARNING",
 			Argument:  "warning",
@@ -68,7 +68,7 @@ var (
 			Usage:     "Warning level",
 			Value:     &plugin.WarningStr,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      "critical",
 			Env:       "PROMETHEUS_CRITICAL",
 			Argument:  "critical",
@@ -77,7 +77,7 @@ var (
 			Usage:     "Critical level",
 			Value:     &plugin.CriticalStr,
 		},
-		{
+		&sensu.PluginConfigOption[bool]{
 			Path:      "emit_perfdata",
 			Env:       "PROMETHEUS_EMIT_PERFDATA",
 			Argument:  "emit-perfdata",
@@ -86,7 +86,7 @@ var (
 			Usage:     "Add perfdata to check output",
 			Value:     &plugin.EmitPerfdata,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      "name",
 			Env:       "PROMETHEUS_NAME",
 			Argument:  "name",
@@ -95,7 +95,7 @@ var (
 			Usage:     "Name",
 			Value:     &plugin.Name,
 		},
-		{
+		&sensu.PluginConfigOption[bool]{
 			Path:      "debug_query",
 			Env:       "PROMETHEUS_DEBUG_QUERY",
 			Argument:  "debug-query",
@@ -104,7 +104,7 @@ var (
 			Usage:     "Enable debug output for query",
 			Value:     &plugin.DebugQuery,
 		},
-		{
+		&sensu.PluginConfigOption[bool]{
 			Path:      "nan_is_ok",
 			Env:       "PROMETHEUS_NAN_IS_OK",
 			Argument:  "nan-is-ok",
