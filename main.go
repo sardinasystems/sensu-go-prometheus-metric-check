@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"os"
 	"strings"
 	"time"
 
@@ -117,7 +118,18 @@ var (
 )
 
 func main() {
-	check := sensu.NewGoCheck(&plugin.PluginConfig, options, checkArgs, executeCheck, false)
+	useStdin := false
+	fi, err := os.Stdin.Stat()
+	if err != nil {
+		fmt.Printf("Error check stdin: %v\n", err)
+		panic(err)
+	}
+	//Check the Mode bitmask for Named Pipe to indicate stdin is connected
+	if fi.Mode()&os.ModeNamedPipe != 0 {
+		useStdin = true
+	}
+
+	check := sensu.NewGoCheck(&plugin.PluginConfig, options, checkArgs, executeCheck, useStdin)
 	check.Execute()
 }
 
