@@ -11,7 +11,7 @@ import (
 	"github.com/prometheus/client_golang/api"
 	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
-	"github.com/sensu/sensu-go/types"
+	corev2 "github.com/sensu/core/v2"
 	"github.com/sensu/sensu-plugin-sdk/sensu"
 
 	"github.com/sardinasystems/sensu-go-prometheus-metric-check/utils"
@@ -132,7 +132,7 @@ func main() {
 	check.Execute()
 }
 
-func checkArgs(event *types.Event) (int, error) {
+func checkArgs(event *corev2.Event) (int, error) {
 	var err error
 
 	plugin.WarningThreshold, err = utils.ParseThreshold(plugin.WarningStr)
@@ -157,7 +157,7 @@ func checkArgs(event *types.Event) (int, error) {
 	return sensu.CheckStateOK, nil
 }
 
-func executeCheck(event *types.Event) (int, error) {
+func executeCheck(event *corev2.Event) (int, error) {
 
 	apicfg := api.Config{
 		Address: plugin.PrometheusURL,
