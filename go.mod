@@ -6,7 +6,7 @@ require (
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.37.0
 	github.com/sensu/sensu-go/types v0.12.0
-	github.com/sensu/sensu-plugin-sdk v0.16.0
+	github.com/sensu/sensu-plugin-sdk v0.18.0
 	github.com/stretchr/testify v1.8.1
 )
 
@@ -33,10 +33,9 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/robertkrimen/otto v0.2.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
-	github.com/sensu/core/v2 v2.16.0-alpha6 // indirect
-	github.com/sensu/sensu-api-tools v0.0.0-20221025205055-db03ae2f8099 // indirect
-	github.com/sensu/sensu-go/api/core/v2 v2.16.0 // indirect
-	github.com/sensu/sensu-licensing v0.1.2 // indirect
+	github.com/sensu/core/v2 v2.16.1 // indirect
+	github.com/sensu/sensu-api-tools v0.1.0 // indirect
+	github.com/sensu/sensu-licensing/v2 v2.2.1 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
