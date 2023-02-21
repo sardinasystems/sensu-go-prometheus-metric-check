@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/prometheus/client_golang v1.14.0
-	github.com/prometheus/common v0.39.0
+	github.com/prometheus/common v0.40.0
 	github.com/sensu/core/v2 v2.17.0
 	github.com/sensu/sensu-plugin-sdk v0.18.0
 	github.com/stretchr/testify v1.8.1
