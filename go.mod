@@ -7,7 +7,7 @@ require (
 	github.com/prometheus/common v0.40.0
 	github.com/sensu/core/v2 v2.17.0
 	github.com/sensu/sensu-plugin-sdk v0.18.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
