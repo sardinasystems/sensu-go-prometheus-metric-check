@@ -6,7 +6,7 @@ require (
 	github.com/prometheus/client_golang v1.18.0
 	github.com/prometheus/common v0.48.0
 	github.com/sensu/core/v2 v2.20.0
-	github.com/sensu/sensu-plugin-sdk v0.18.0
+	github.com/sensu/sensu-plugin-sdk v0.19.0
 	github.com/stretchr/testify v1.8.4
 )
 
