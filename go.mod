@@ -2,8 +2,6 @@ module github.com/sardinasystems/sensu-go-prometheus-metric-check
 
 go 1.22.7
 
-toolchain go1.23.1
-
 require (
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/common v0.60.1
