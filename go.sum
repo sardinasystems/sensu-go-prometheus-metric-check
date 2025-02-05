@@ -85,6 +85,8 @@ github.com/sagikazarmark/locafero v0.7.0 h1:5MqpDsTGNDhY8sGp0Aowyf0qKsPrhewaLSsF
 github.com/sagikazarmark/locafero v0.7.0/go.mod h1:2za3Cg5rMaTMoG/2Ulr9AwtFaIppKXTRYnozin4aB5k=
 github.com/sagikazarmark/slog-shim v0.1.0 h1:diDBnUNK9N/354PgrxMywXnAwEr1QZcOr6gto+ugjYE=
 github.com/sagikazarmark/slog-shim v0.1.0/go.mod h1:SrcSrq8aKtyuqEI1uvTDTK1arOWRIczQRv+GVI1AkeQ=
+github.com/sardinasystems/sensu-go-check-common v0.0.0-20250205120347-ebe0a44b4bbb h1:NVELET38v4brjYH/16X+Kuy1XNtIdcxZuEfXxioxY78=
+github.com/sardinasystems/sensu-go-check-common v0.0.0-20250205120347-ebe0a44b4bbb/go.mod h1:Wq2gx5l1v+aa/l74sLiQHek1i916lkHa/OpZkJsZaqQ=
 github.com/sensu/core/v2 v2.20.0 h1:QJQbqZiXSQ2dUE8LUvwUcKaqxHjYYCQwJ1Mil0cap4U=
 github.com/sensu/core/v2 v2.20.0/go.mod h1:fzr3qioLAHyLsBfq9I6ELVjL01NUNjqmQx4kj2tbDLo=
 github.com/sensu/sensu-api-tools v0.2.1 h1:wjT5AFdboQ3jDwzBMcD38VJEwwWhPIIuReZrCi9Ezos=
